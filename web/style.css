@@ -69,11 +69,30 @@ form { display:grid; gap:9px; margin-top:10px }
 label { min-width:0; font-size:12px; font-weight:700; color:#46574c }
 input,select { width:100%; min-width:0; display:block; padding:7px; margin-top:4px; border:1px solid #dce5dc; border-radius:7px; background:#fcfdfa; color:var(--ink) }
 .history-card+.history-card { margin-top:16px }
-.about-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px }
-.about-card { padding:22px }
-.about-card p { margin-top:10px }
-.about-card strong { color:var(--ink) }
-.about-card a { color:var(--green); font-weight:700; text-decoration:underline }
+.about-hero { display:grid; grid-template-columns:1.15fr 1fr; overflow:hidden; position:relative; margin-top:24px; border-radius:20px; background:#183a2b; color:#f6fbf3 }
+.about-hero-copy { padding:clamp(22px,4vw,52px); align-self:center }
+.about-hero .about-label { margin-bottom:12px; color:#c6ef9c; font-weight:750; font-size:13px }
+.about-hero h1 { font-size:clamp(30px,4.4vw,55px); max-width:13ch }
+.about-hero p { color:#e1eddf; max-width:41ch; margin-top:14px }
+.about-hero-image { display:block; width:100%; height:100%; min-height:0; object-fit:cover; object-position:center }
+.about-cta { display:inline-flex; align-items:center; gap:12px; padding:9px 13px; margin-top:22px; border-radius:8px; background:#c6ef9c; color:#183a2b; font-weight:750; font-size:13px }
+.about-cta:hover { background:#daf8bd }
+.about-cta:focus-visible { outline-color:#fff }
+.about-section { margin-top:22px }
+.about-section h2,.about-flow h2 { font-size:22px }
+.about-cycle { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:10px }
+.about-step { padding:16px 18px; border-top:3px solid #559471 }
+.about-step:nth-child(2) { border-top-color:#779a54 }
+.about-step:nth-child(3) { border-top-color:#bb9250 }
+.about-step strong { display:block; color:var(--green); font-size:36px; font-weight:750; letter-spacing:-.06em; line-height:1.1; margin-bottom:7px }
+.about-step strong span { font-size:20px }
+.about-step h3,.about-flow h3 { margin:0; font-size:14px; letter-spacing:-.02em }
+.about-step p,.about-flow p { margin-top:4px; font-size:13px }
+.about-flow { margin-top:16px; padding:18px }
+.about-flow-heading { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px }
+.about-flow-heading a { color:var(--green); font-size:13px; font-weight:750; text-decoration:underline; text-underline-offset:3px }
+.about-flow ol { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); padding:0; margin:16px 0 0; list-style:none }
+.about-flow li { padding:4px 12px; border-left:2px solid #c7e0c3 }
 #filters { grid-template-columns:repeat(3,minmax(0,1fr)); align-items:end }
 .table-wrap { overflow:auto; margin-top:14px }
 table { width:100%; border-collapse:collapse; white-space:nowrap; font-size:13px }
@@ -100,7 +119,11 @@ footer { border-top:1px solid var(--line); padding:17px 0; margin-top:22px; font
 @media (max-width:590px) {
   main { padding:0 14px }
   .overview-grid,.metrics { grid-template-columns:1fr }
-  .about-grid { grid-template-columns:1fr }
+  .about-hero { grid-template-columns:1fr }
+  .about-hero-image { height:175px }
+  .about-cycle { grid-template-columns:1fr; gap:8px }
+  .about-step { padding:12px 14px }
+  .about-flow ol { grid-template-columns:1fr; gap:10px }
   #filters { grid-template-columns:repeat(2,minmax(0,1fr)) }
   .intro { align-items:start; flex-direction:column; margin-top:22px }
   .date { margin:0 }

@@ -78,19 +78,47 @@
       </article>
     </section>
     <section id="sobre" aria-labelledby="about-title" hidden>
-      <div class="intro"><div><h1 id="about-title">Sobre o Raiz</h1><p>Um irrigador automático com Arduino Uno R3 para acompanhar as condições do solo.</p></div></div>
-      <div class="about-grid">
-        <article class="card about-card">
-          <h2>Como a irrigação funciona</h2>
-          <p>O sensor mede a umidade do solo. Abaixo de <strong>40%</strong>, o Arduino aciona a bomba por <strong>3 segundos</strong> e aguarda <strong>5 segundos</strong> antes de repetir. Quando a umidade chega a 40% ou mais, o ciclo para.</p>
-          <p>O LCD mostra a umidade e o estado da bomba. Um sensor LDR mede a luz do ambiente para acompanhar a exposição do canteiro.</p>
-        </article>
-        <article class="card about-card">
-          <h2>Do Arduino ao painel</h2>
-          <p>O Arduino envia as leituras pela conexão USB serial. O painel exibe os valores ao vivo e permite pausar a irrigação ou retomar o modo automático.</p>
-          <p>As leituras são gravadas no PostgreSQL. Na aba <a href="#historico">Histórico</a>, você pode consultar os dados por data, condição do solo, luminosidade e estado da bomba.</p>
-        </article>
-      </div>
+      <header class="about-hero">
+        <div class="about-hero-copy">
+          <p class="about-label">Sobre o Raiz</p>
+          <h1 id="about-title">Irrigação automática com Arduino</h1>
+          <p>O Raiz acompanha a umidade do solo e rega o canteiro quando ele precisa de água. Você pode acompanhar as leituras e controlar a irrigação pelo painel.</p>
+          <a class="about-cta" href="#visao">Explorar o painel <span aria-hidden="true">→</span></a>
+        </div>
+        <img class="about-hero-image" src="/irrigacao.webp" alt="Ilustração de uma muda junto a um tubo de irrigação por gotejamento" width="1000" height="750">
+      </header>
+      <section class="about-section" aria-labelledby="cycle-title">
+        <h2 id="cycle-title">O ciclo de irrigação</h2>
+        <div class="about-cycle">
+          <article class="card about-step">
+            <strong>40<span>%</span></strong>
+            <h3>Limiar de umidade</h3>
+            <p>A bomba liga abaixo de 40%. Ao atingir 40% ou mais, o ciclo para.</p>
+          </article>
+          <article class="card about-step">
+            <strong>3 <span>s</span></strong>
+            <h3>Bomba ligada</h3>
+            <p>O Arduino aciona a bomba para regar o solo.</p>
+          </article>
+          <article class="card about-step">
+            <strong>5 <span>s</span></strong>
+            <h3>Intervalo entre regas</h3>
+            <p>A bomba fica desligada antes de repetir o ciclo, se o solo continuar seco.</p>
+          </article>
+        </div>
+      </section>
+      <section class="card about-flow" aria-labelledby="flow-title">
+        <div class="about-flow-heading">
+          <h2 id="flow-title">Do solo ao histórico</h2>
+          <a href="#historico">Consultar histórico <span aria-hidden="true">→</span></a>
+        </div>
+        <ol>
+          <li><h3>Sensores</h3><p>Medem a umidade do solo e a luz ambiente.</p></li>
+          <li><h3>Arduino Uno R3</h3><p>Controla a bomba e mostra a umidade e o estado da bomba no LCD.</p></li>
+          <li><h3>Painel Raiz</h3><p>Recebe os dados por USB serial e envia os comandos de pausa e retomada.</p></li>
+          <li><h3>PostgreSQL no Neon</h3><p>Armazena as leituras para consulta por data e condição do canteiro.</p></li>
+        </ol>
+      </section>
     </section>
     <footer><span>Raiz · Monitoramento de irrigação</span><span id="last-reading">Aguardando dados</span></footer>
   </main>
