@@ -2,6 +2,14 @@
 
 Painel web em português para um irrigador automático com Arduino Uno R3. Mostra umidade do solo, luminosidade, estado da bomba e gráfico das leituras recentes. No histórico, é possível combinar datas, condição do solo, luminosidade mínima e estado da bomba. As datas usam o fuso horário do navegador.
 
+## Autoria
+
+Projeto desenvolvido pelos alunos:
+
+- João Lucas Binttencourt Rocha
+- José Carlos Silva Pimentel
+- João Pedro Oliveira
+
 ## Executar com o Neon
 
 O painel usa Python 3.10+ e um banco PostgreSQL no Neon. No painel do Neon, abra seu projeto, clique em **Connect** e selecione a branch, o banco e a role. Copie a URL de conexão completa, incluindo os parâmetros TLS fornecidos pelo Neon. Use uma role com permissão para criar a tabela e o índice na primeira inicialização.
