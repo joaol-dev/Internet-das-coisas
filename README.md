@@ -2,18 +2,31 @@
 
 Painel web em português para um irrigador automático com Arduino Uno R3. Mostra umidade do solo, luminosidade, estado da bomba e gráfico das leituras recentes. No histórico, é possível combinar datas, condição do solo, luminosidade mínima e estado da bomba. As datas usam o fuso horário do navegador.
 
-## Executar
+## Executar com o Neon
 
-Requer Python 3.10+, Docker e Docker Compose. Na raiz do projeto:
+O painel usa Python 3.10+ e um banco PostgreSQL no Neon. No painel do Neon, abra seu projeto, clique em **Connect** e selecione a branch, o banco e a role. Copie a URL de conexão completa, incluindo os parâmetros TLS fornecidos pelo Neon. Use uma role com permissão para criar a tabela e o índice na primeira inicialização.
+
+### Windows (Prompt de Comando)
+
+Na pasta do projeto, substitua o exemplo de `DATABASE_URL` pela URL copiada e rode:
+
+```bat
+py -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+set "DATABASE_URL=COLE_A_URL_COMPLETA_DO_NEON_AQUI"
+.venv\Scripts\python.exe app.py
+```
+
+### Linux e macOS
 
 ```bash
-docker compose up -d --wait
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
+export DATABASE_URL='COLE_A_URL_COMPLETA_DO_NEON_AQUI'
 .venv/bin/python app.py
 ```
 
-Abra http://127.0.0.1:8000. No Windows, use `.venv\Scripts\python.exe` no lugar de `.venv/bin/python`. O PostgreSQL 17 local usa um volume persistente. Para utilizar um servidor PostgreSQL existente, defina `DATABASE_URL` e execute o aplicativo com um usuário que possa criar a tabela e o índice.
+Acesse http://127.0.0.1:8000. Mantenha o terminal aberto enquanto usa o painel. Ao abrir outro terminal, defina `DATABASE_URL` novamente antes de executar o aplicativo. A URL contém a senha do banco e deve ficar fora dos arquivos versionados.
 
 Por padrão, o aplicativo simula os dois sensores. Em **Simulação de sensores**, aplique uma umidade abaixo de 40% para observar a bomba ligar por 3 segundos e aguardar 5 segundos. Aumente a umidade para 40% ou mais para interromper o ciclo ou use **Pausar**. A interface amostra a simulação a cada segundo. As leituras simuladas e reais são gravadas com origens distintas, e o histórico mostra apenas a origem da sessão atual.
 
@@ -23,7 +36,7 @@ O painel atualiza a leitura ao vivo a cada segundo. O histórico registra a prim
 
 1. Monte o circuito e carregue [o sketch](firmware/irrigador/irrigador.ino) no Arduino Uno com a biblioteca Arduino LiquidCrystal.
 2. Ajuste `SOIL_DRY` e `SOIL_WET` com os valores brutos do sensor nas referências seca e úmida. Os valores iniciais, 0 e 876, vêm do sketch do Tinkercad. A leitura de luminosidade corresponde à escala do conversor analógico, em porcentagem e sem conversão para lux. Os dois sensores acompanham o mesmo canteiro. O LDR fornece contexto sobre a exposição à luz e a umidade controla a bomba.
-3. Feche o Monitor Serial e rode `.venv/bin/python app.py --serial /dev/ttyACM0` no computador conectado ao Arduino. Substitua pela porta correta, por exemplo `COM3` no Windows.
+3. Feche o Monitor Serial. No computador conectado ao Arduino, configure `DATABASE_URL` como descrito acima e rode `.venv\Scripts\python.exe app.py --serial COM3` no Windows ou `.venv/bin/python app.py --serial /dev/ttyACM0` no Linux. Substitua a porta pela usada na sua máquina.
 
 | Componente | Ligação no Uno |
 | --- | --- |
