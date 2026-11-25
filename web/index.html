@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>Raiz · Irrigação inteligente</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#visao"><span class="brand-mark" aria-hidden="true">❧</span><span>raiz<span class="brand-dot">.</span><small>IRRIGAÇÃO INTELIGENTE</small></span></a>
+    <nav aria-label="Navegação principal">
+      <a href="#visao" class="active"><span aria-hidden="true">▦</span> Visão geral</a>
+      <a href="#historico"><span aria-hidden="true">◷</span> Histórico</a>
+    </nav>
+    <div class="sidebar-device"><span class="device-icon" aria-hidden="true">▣</span><div><strong>Arduino Uno R3</strong><small id="side-status">Aguardando conexão</small></div></div>
+  </aside>
+  <main>
+    <header class="top"><span>Painel de irrigação</span><span class="connection" id="connection">Conectando…</span></header>
+    <section id="visao">
+      <div class="intro"><div><h1>Visão geral</h1><p>Acompanhe o solo e controle a irrigação em tempo real.</p></div><span id="today" class="date"></span></div>
+      <div class="metrics">
+        <article class="card metric moisture">
+          <span class="metric-icon" aria-hidden="true">◈</span><h2>Umidade do solo</h2><strong id="moisture">—</strong><div class="track"><div id="moisture-bar"></div></div><small id="soil-condition">Aguardando leitura</small>
+        </article>
+        <article class="card metric light">
+          <span class="metric-icon" aria-hidden="true">☀</span><h2>Luminosidade</h2><strong id="light">—</strong><div class="track"><div id="light-bar"></div></div><small>Intensidade de luz ambiente</small>
+        </article>
+        <article class="card metric pump">
+          <span class="metric-icon" aria-hidden="true">⏻</span><h2>Estado da bomba</h2><strong id="pump">—</strong><span class="pill" id="mode">Aguardando</span><small>Abaixo de 40% · 3 s ligada e 5 s de pausa</small>
+        </article>
+      </div>
+      <div class="overview-grid">
+        <article class="card trend">
+          <div class="card-heading"><div><h2>Leituras recentes</h2><p>Umidade e luminosidade</p></div><span class="pill"><i></i> Ao vivo</span></div>
+          <canvas id="chart" role="img" aria-label="Gráfico das últimas leituras de umidade e luminosidade"></canvas>
+          <div class="legend"><span><i></i> Umidade do solo</span><span><i></i> Luminosidade</span></div>
+        </article>
+        <div class="controls">
+          <article class="card control">
+            <h2>Controle da irrigação</h2>
+            <p>Pause a bomba ou retome a irrigação automática.</p>
+            <div class="actions"><button id="auto" type="button">Automático</button><button id="pause" class="secondary" type="button">Pausar</button></div>
+            <small id="control-message" role="status"></small>
+          </article>
+          <article class="card control simulator" id="simulator" hidden>
+            <h2>Simulação de sensores</h2>
+            <form id="simulation-form">
+              <label>Umidade (%)<input name="umidade" type="number" min="0" max="100" value="42" required></label>
+              <label>Luz (%)<input name="luz" type="number" min="0" max="100" value="68" required></label>
+              <button class="secondary">Aplicar</button>
+            </form>
+            <small id="simulation-message" role="status"></small>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="historico" hidden>
+      <div class="intro"><div><h1>Histórico</h1><p>Consulte as medições armazenadas no PostgreSQL.</p></div></div>
+      <article class="card history-card">
+        <div class="card-heading"><div><h2>Filtros de leitura</h2><p>Selecione um período e as condições dos sensores.</p></div></div>
+        <form id="filters">
+          <label>Data inicial<input type="date" name="inicio"></label>
+          <label>Data final<input type="date" name="fim"></label>
+          <label>Condição do solo<select name="solo"><option value="">Todas</option><option value="seco">Seco (&lt; 40%)</option><option value="umido">Com umidade (≥ 40%)</option></select></label>
+          <label>Luminosidade mínima (%)<input type="number" name="luz_min" min="0" max="100" placeholder="Qualquer"></label>
+          <label>Bomba<select name="bomba"><option value="">Todos os estados</option><option value="on">Ligada</option><option value="off">Desligada</option></select></label>
+          <div class="actions"><button>Consultar</button><button class="secondary" id="yesterday" type="button">Ontem</button></div>
+        </form>
+      </article>
+      <article class="card history-card">
+        <div class="card-heading"><div><h2>Leituras registradas</h2><p id="history-message" role="status"></p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Data e hora</th><th>Umidade</th><th>Luminosidade</th><th>Bomba</th><th>Modo</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="pagination"><button id="previous" class="secondary" type="button">Anterior</button><button id="next" class="secondary" type="button">Próxima</button></div>
+      </article>
+    </section>
+    <footer><span>Raiz · Monitoramento de irrigação</span><span id="last-reading">Aguardando dados</span></footer>
+  </main>
+</body>
+</html>
