@@ -217,9 +217,10 @@ el('simulation-form').addEventListener('submit', async (event) => {
 });
 
 function navigate() {
-  const tab = location.hash === '#historico' ? 'historico' : 'visao';
-  el('visao').hidden = tab !== 'visao';
-  el('historico').hidden = tab !== 'historico';
+  const tabs = ['visao', 'historico', 'sobre'];
+  const requested = location.hash.slice(1);
+  const tab = tabs.includes(requested) ? requested : 'visao';
+  tabs.forEach((id) => { el(id).hidden = id !== tab; });
   document.querySelectorAll('nav a').forEach((link) => {
     const active = link.hash === '#' + tab;
     link.classList.toggle('active', active);
@@ -227,7 +228,7 @@ function navigate() {
     else link.removeAttribute('aria-current');
   });
   if (tab === 'historico') loadHistory();
-  else drawChart();
+  if (tab === 'visao') drawChart();
 }
 
 el('auto').addEventListener('click', () => sendMode('AUTO'));

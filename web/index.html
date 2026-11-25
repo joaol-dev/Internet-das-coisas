@@ -14,6 +14,7 @@
     <nav aria-label="Navegação principal">
       <a href="#visao" class="active"><span aria-hidden="true">▦</span> Visão geral</a>
       <a href="#historico"><span aria-hidden="true">◷</span> Histórico</a>
+      <a href="#sobre"><span aria-hidden="true">ⓘ</span> Sobre</a>
     </nav>
     <div class="sidebar-device"><span class="device-icon" aria-hidden="true">▣</span><div><strong>Arduino Uno R3</strong><small id="side-status">Aguardando conexão</small></div></div>
   </aside>
@@ -75,6 +76,21 @@
         <div class="table-wrap"><table><thead><tr><th>Data e hora</th><th>Umidade</th><th>Luminosidade</th><th>Bomba</th><th>Modo</th></tr></thead><tbody id="rows"></tbody></table></div>
         <div class="pagination"><button id="previous" class="secondary" type="button">Anterior</button><button id="next" class="secondary" type="button">Próxima</button></div>
       </article>
+    </section>
+    <section id="sobre" aria-labelledby="about-title" hidden>
+      <div class="intro"><div><h1 id="about-title">Sobre o Raiz</h1><p>Um irrigador automático com Arduino Uno R3 para acompanhar as condições do solo.</p></div></div>
+      <div class="about-grid">
+        <article class="card about-card">
+          <h2>Como a irrigação funciona</h2>
+          <p>O sensor mede a umidade do solo. Abaixo de <strong>40%</strong>, o Arduino aciona a bomba por <strong>3 segundos</strong> e aguarda <strong>5 segundos</strong> antes de repetir. Quando a umidade chega a 40% ou mais, o ciclo para.</p>
+          <p>O LCD mostra a umidade e o estado da bomba. Um sensor LDR mede a luz do ambiente para acompanhar a exposição do canteiro.</p>
+        </article>
+        <article class="card about-card">
+          <h2>Do Arduino ao painel</h2>
+          <p>O Arduino envia as leituras pela conexão USB serial. O painel exibe os valores ao vivo e permite pausar a irrigação ou retomar o modo automático.</p>
+          <p>As leituras são gravadas no PostgreSQL. Na aba <a href="#historico">Histórico</a>, você pode consultar os dados por data, condição do solo, luminosidade e estado da bomba.</p>
+        </article>
+      </div>
     </section>
     <footer><span>Raiz · Monitoramento de irrigação</span><span id="last-reading">Aguardando dados</span></footer>
   </main>
