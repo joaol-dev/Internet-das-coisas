@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "web",
+  "rewrites": [
+    { "source": "/api/:acao(status|leituras|modo|simulacao)", "destination": "/api/index?acao=:acao" }
+  ]
+}

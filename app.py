@@ -157,8 +157,13 @@ class Device:
                 time.sleep(2)
 
 
-def history(source, query):
+def history(source, query, *, session=None):
     clauses, args = ["fonte = %s"], [source]
+    table = "leituras"
+    if session is not None:
+        table = "raiz_leituras_web"
+        clauses.append("sessao = %s")
+        args.append(session)
     for key, operator in (("inicio", ">="), ("fim", "<")):
         if key in query:
             value = datetime.fromisoformat(query[key][0])
@@ -194,7 +199,7 @@ def history(source, query):
     where = " AND ".join(clauses)
     with psycopg.connect(DSN, row_factory=dict_row) as db:
         rows = db.execute(f"""
-            SELECT * FROM leituras WHERE {where}
+            SELECT id, instante, umidade, luz, bomba, modo, fonte FROM {table} WHERE {where}
             ORDER BY instante DESC, id DESC LIMIT %s
         """, [*args, limit + 1]).fetchall()
     next_cursor = None

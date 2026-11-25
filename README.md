@@ -32,6 +32,15 @@ Por padrão, o aplicativo simula os dois sensores. Em **Simulação de sensores*
 
 O painel atualiza a leitura ao vivo a cada segundo. O histórico registra a primeira leitura, as mudanças de umidade, luminosidade, bomba ou modo e uma leitura a cada 60 segundos quando os valores ficam estáveis.
 
+## Publicar na Vercel
+
+A versão hospedada roda a simulação. Cada navegador mantém sua sessão e seu histórico no Neon. O ciclo é calculado quando o painel consulta a API, e as transições da bomba são gravadas conforme o painel as observa. Para usar o Arduino por USB, execute o painel no computador conectado à placa.
+
+1. No **SQL Editor** do Neon, execute [api/neon.sql](api/neon.sql) no banco que será usado pela Vercel. O script cria tabelas próprias para as sessões e leituras da simulação online.
+2. Na Vercel, escolha **Add New → Project** e importe o repositório `joaol-dev/Internet-das-coisas`. Mantenha a raiz do repositório como **Root Directory**. O [vercel.json](vercel.json) determina a pasta pública e as rotas da API.
+3. Em **Environment Variables**, adicione `DATABASE_URL` com a URL completa de conexão do Neon, incluindo os parâmetros TLS. Use a URL do **pooler** e selecione o ambiente **Production**. Para testar em implantações de prévia, configure a variável também em **Preview**.
+4. Clique em **Deploy**. No endereço publicado, confira o indicador **Simulação online**, aplique 39% de umidade e consulte o histórico. Se adicionar ou corrigir a variável depois da publicação, faça um novo deploy.
+
 ## Conectar o Arduino
 
 1. Monte o circuito e carregue [o sketch](firmware/irrigador/irrigador.ino) no Arduino Uno com a biblioteca Arduino LiquidCrystal.

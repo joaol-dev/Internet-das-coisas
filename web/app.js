@@ -4,6 +4,7 @@ const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyl
 const clock = new Intl.DateTimeFormat('pt-BR', { timeStyle: 'medium' });
 const dayLabel = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' });
 let chartRows = [];
+let sessionId;
 let chartSavedId;
 let source;
 let pendingMode;
@@ -13,8 +14,17 @@ let nextCursor;
 let historyRequest = 0;
 
 async function api(url, body) {
-  const response = await fetch(url, body === undefined ? { cache: 'no-store' } : {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  if (!sessionId) {
+    try {
+      sessionId = localStorage.getItem('raiz-sessao') || crypto.randomUUID?.();
+      if (sessionId) localStorage.setItem('raiz-sessao', sessionId);
+    } catch {
+      sessionId ||= crypto.randomUUID?.();
+    }
+  }
+  const headers = sessionId ? { 'X-Raiz-Sessao': sessionId } : {};
+  const response = await fetch(url, body === undefined ? { cache: 'no-store', headers } : {
+    method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body),
   });
   const payload = await response.json();
   if (!response.ok) throw new Error(payload.erro || 'Serviço indisponível');
@@ -77,7 +87,7 @@ function renderStatus(status) {
   const { leitura: row, online } = status;
   el('simulator').hidden = source !== 'simulacao';
   el('connection').dataset.online = online;
-  el('connection').textContent = !online ? 'Sem conexão' : source === 'simulacao' ? 'Modo simulação' : 'Arduino conectado';
+  el('connection').textContent = !online ? 'Sem conexão' : source === 'simulacao' ? (status.hospedado ? 'Simulação online' : 'Modo simulação') : 'Arduino conectado';
   el('side-status').textContent = !online ? 'Sem conexão' : source === 'simulacao' ? 'Sensores simulados' : 'Conexão serial ativa';
   el('auto').disabled = el('pause').disabled = !online;
   const current = online ? row : null;
@@ -101,6 +111,7 @@ function renderStatus(status) {
 async function refresh() {
   let status;
   try {
+    if (document.hidden) return;
     status = await api('/api/status');
     renderStatus(status);
     if (!el('visao').hidden && status.ultima_gravacao && chartSavedId !== status.ultima_gravacao) {
