@@ -17,6 +17,8 @@ Abra http://127.0.0.1:8000. No Windows, use `.venv\Scripts\python.exe` no lugar 
 
 Por padrão, o aplicativo simula os dois sensores. Em **Simulação de sensores**, aplique uma umidade abaixo de 40% para observar a bomba ligar por 3 segundos e aguardar 5 segundos. Aumente a umidade para 40% ou mais para interromper o ciclo ou use **Pausar**. A interface amostra a simulação a cada segundo. As leituras simuladas e reais são gravadas com origens distintas, e o histórico mostra apenas a origem da sessão atual.
 
+O painel atualiza a leitura ao vivo a cada segundo. O histórico registra a primeira leitura, as mudanças de umidade, luminosidade, bomba ou modo e uma leitura a cada 60 segundos quando os valores ficam estáveis.
+
 ## Conectar o Arduino
 
 1. Monte o circuito e carregue [o sketch](firmware/irrigador/irrigador.ino) no Arduino Uno com a biblioteca Arduino LiquidCrystal.

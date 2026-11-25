@@ -4,6 +4,7 @@ const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyl
 const clock = new Intl.DateTimeFormat('pt-BR', { timeStyle: 'medium' });
 const dayLabel = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' });
 let chartRows = [];
+let chartSavedId;
 let source;
 let pendingMode;
 let historyQuery = new URLSearchParams();
@@ -88,7 +89,7 @@ function renderStatus(status) {
   el('light-bar').style.width = (current?.luz ?? 0) + '%';
   el('soil-condition').textContent = current ? (current.umidade < dryThreshold ? 'Solo seco' : 'Solo com umidade') : 'Aguardando leitura';
   if (row) el('last-reading').textContent = 'Última leitura às ' + clock.format(new Date(row.instante));
-  if (pendingMode && current?.id > pendingMode.after && current.modo === pendingMode.value) {
+  if (pendingMode && current?.sequencia > pendingMode.after && current.modo === pendingMode.value) {
     el('control-message').textContent = 'Modo confirmado na leitura.';
     pendingMode = null;
   } else if (pendingMode && Date.now() > pendingMode.expires) {
@@ -102,9 +103,10 @@ async function refresh() {
   try {
     status = await api('/api/status');
     renderStatus(status);
-    if (!el('visao').hidden && status.leitura && chartRows.at(-1)?.id !== status.leitura.id) {
+    if (!el('visao').hidden && status.ultima_gravacao && chartSavedId !== status.ultima_gravacao) {
       const data = await api('/api/leituras?limite=40');
       chartRows = data.leituras.reverse();
+      chartSavedId = status.ultima_gravacao;
       drawChart();
     }
   } catch {

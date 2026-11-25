@@ -4,7 +4,7 @@ import logging
 import os
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
@@ -19,6 +19,7 @@ LOG = logging.getLogger(__name__)
 DRY_THRESHOLD = 40
 WATER_SECONDS = 3
 REST_SECONDS = 5
+HISTORY_INTERVAL_SECONDS = 60
 
 
 def initialize_database():
@@ -45,6 +46,10 @@ class Device:
         self.connection = None
         self.latest = None
         self.received = 0
+        self.sequence = 0
+        self.saved_id = None
+        self.saved_sample = None
+        self.saved_at = 0
         self.moisture = 42
         self.light = 68
         self.mode = "AUTO"
@@ -53,7 +58,10 @@ class Device:
     def status(self):
         with self.lock:
             online = self.latest is not None and time.monotonic() - self.received < 5
-            return {"fonte": self.source, "online": online, "leitura": self.latest}
+            return {
+                "fonte": self.source, "online": online, "leitura": self.latest,
+                "ultima_gravacao": self.saved_id,
+            }
 
     def change_mode(self, mode):
         with self.lock:
@@ -65,7 +73,7 @@ class Device:
                 if self.connection is None or time.monotonic() - self.received >= 5:
                     raise ConnectionError("Arduino sem comunicação")
                 self.connection.write((mode + "\n").encode("ascii"))
-            return self.latest["id"] if self.latest else 0
+            return self.sequence
 
     def set_inputs(self, moisture, light):
         if self.port:
@@ -76,14 +84,31 @@ class Device:
                 self.dry_since = None
 
     def record(self, moisture, light, pump, mode):
-        with psycopg.connect(DSN, row_factory=dict_row) as db:
-            row = db.execute("""
-                INSERT INTO leituras (umidade, luz, bomba, modo, fonte)
-                VALUES (%s, %s, %s, %s, %s) RETURNING *
-            """, (moisture, light, pump, mode, self.source)).fetchone()
+        now = time.monotonic()
+        timestamp = datetime.now(timezone.utc)
+        sample = (moisture, light, pump, mode)
         with self.lock:
-            self.latest = row
-            self.received = time.monotonic()
+            self.sequence += 1
+            self.latest = {
+                "sequencia": self.sequence, "instante": timestamp, "umidade": moisture,
+                "luz": light, "bomba": pump, "modo": mode, "fonte": self.source,
+            }
+            self.received = now
+        if sample == self.saved_sample and now - self.saved_at < HISTORY_INTERVAL_SECONDS:
+            return
+        try:
+            with psycopg.connect(DSN) as db:
+                (saved_id,) = db.execute("""
+                    INSERT INTO leituras (instante, umidade, luz, bomba, modo, fonte)
+                    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
+                """, (timestamp, *sample, self.source)).fetchone()
+        except psycopg.Error:
+            LOG.warning("Não foi possível gravar a leitura no histórico", exc_info=True)
+            return
+        with self.lock:
+            self.saved_id = saved_id
+            self.saved_sample = sample
+            self.saved_at = now
 
     def simulate(self):
         while True:
